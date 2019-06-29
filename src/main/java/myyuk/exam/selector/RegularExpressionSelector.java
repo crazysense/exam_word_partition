@@ -1,17 +1,28 @@
 package myyuk.exam.selector;
 
+import myyuk.exam.configuration.Configurable;
+import myyuk.exam.option.Option;
+
 import java.util.regex.Pattern;
 
-public class RegularExpressionSelector implements Selector<String> {
+/**
+ * TODO:
+ */
+@SuppressWarnings("unused")
+public class RegularExpressionSelector implements Selector<String>, Configurable {
 
-    private final Pattern pattern;
+    public static final String REGEX_OPTION_KEY = "option.selector.regex";
+    public static final String REGEX_OPTION_DEFAULT = ".*";
 
-    public RegularExpressionSelector(Pattern pattern) {
-        this.pattern = pattern;
-    }
+    private Pattern pattern;
 
     @Override
     public boolean filter(String value) {
         return this.pattern.matcher(value).matches();
+    }
+
+    @Override
+    public void configure(Option option) {
+        this.pattern = Pattern.compile(option.getString(REGEX_OPTION_KEY, REGEX_OPTION_DEFAULT));
     }
 }

@@ -1,10 +1,15 @@
 package myyuk.exam.channel;
 
+import myyuk.exam.exception.StreamExecutionException;
 import myyuk.exam.stream.DataWrapper;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * TODO:
+ */
+@SuppressWarnings("unused")
 public class MemoryFifoChannel<T> implements Channel<T> {
 
     private BlockingQueue<DataWrapper<T>> queue;
@@ -23,8 +28,7 @@ public class MemoryFifoChannel<T> implements Channel<T> {
         try {
             return this.queue.take();
         } catch (InterruptedException e) {
-            // TODO: Logging Error.
-            return null;
+            throw new StreamExecutionException(e.getMessage(), e);
         }
     }
 

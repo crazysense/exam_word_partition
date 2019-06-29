@@ -12,9 +12,14 @@ import java.nio.file.Paths;
  */
 public class OptionBuilder {
     private String[] arguments;
+    private String error;
 
     private OptionBuilder() {
         // Avoid constructor calls from outside.
+    }
+
+    public String getError() {
+        return error;
     }
 
     public static OptionBuilder of() {
@@ -34,8 +39,7 @@ public class OptionBuilder {
 
     public Option build() {
         if (arguments == null || arguments.length != 3) {
-            // TODO : Logging Usage.
-            throw new IllegalArgumentException("Usage : ...");
+            throw new IllegalArgumentException("Invalid Usage");
         }
 
         Option option = new Option();
@@ -50,8 +54,7 @@ public class OptionBuilder {
         // Check the path of the file to be processed.
         Path filePathToRead = Paths.get(option.getString(OptionConstants.READ_FILE_PATH, ""));
         if (!Files.exists(filePathToRead)) {
-            // TODO : Logging Error.
-            // FileNotFoundException("Argument 1");
+            this.error = String.format("The file to read does not exist in the specified path: %s", filePathToRead);
             return false;
         }
         // Check the path of the directory to save results.
@@ -60,17 +63,18 @@ public class OptionBuilder {
             try {
                 Files.createDirectories(directoryPathToWrite);
             } catch (IOException e) {
-                // TODO : Logging Error.
+                this.error = String.format("Could not create a directory to save the results: %s", directoryPathToWrite);
                 return false;
             }
         } else if (!Files.isDirectory(directoryPathToWrite)) {
-            // TODO : Logging Error.
-            // FileAlreadyExistsException("Argument 2");
+            this.error = String.format("Could not create a directory to save the results: %s", directoryPathToWrite);
             return false;
         }
         // Check partition number. (1 < N < 27)
         int partitionNumber = option.getInteger(OptionConstants.PARTITION_NUMBER, OptionConstants.DEFAULT_PARTITION_NUMBER);
         if (!(1 < partitionNumber && partitionNumber < 27)) {
+            this.error = String.format("The number of partitions can not exceed the range of N. (1 < N < 27): %s",
+                    option.getString(OptionConstants.PARTITION_NUMBER));
             return false;
         }
 

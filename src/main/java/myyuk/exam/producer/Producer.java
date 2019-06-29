@@ -6,8 +6,13 @@ import myyuk.exam.selector.Selector;
 import myyuk.exam.stream.DataWrapper;
 
 import java.util.List;
+import java.util.logging.Logger;
 
+/**
+ * TODO:
+ */
 public abstract class Producer<T> implements Runnable {
+    private static final Logger logger = Logger.getGlobal();
 
     private List<Channel<T>> channels;
     private Partitioner<T> partitioner;
@@ -41,14 +46,12 @@ public abstract class Producer<T> implements Runnable {
                     sendNext = selector.filter(value);
                 }
                 if (sendNext) {
-                    int partitionTo = 0;
-                    if (partitioner != null) {
-                        partitionTo = partitioner.partition(value, totalPartitionNumber);
-                        if (partitionTo < 0 || partitionTo >= this.channels.size()) {
-                            // Discard.
-                            // TODO : Logging Info.
-                            continue;
-                        }
+                    int partitionTo = partitioner == null ? 0
+                            : partitioner.partition(value, totalPartitionNumber);
+                    if (partitionTo < 0 || partitionTo >= this.channels.size()) {
+                        // Discard.
+                        logger.info("Invalid partition id: " + partitionTo);
+                        continue;
                     }
                     Channel<T> channel = this.channels.get(partitionTo);
                     channel.add(new DataWrapper<>(value, false));

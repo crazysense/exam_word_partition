@@ -1,10 +1,16 @@
 package myyuk.exam.selector;
 
-import java.util.regex.Pattern;
+import myyuk.exam.option.Option;
 
+/**
+ * TODO:
+ */
+@SuppressWarnings("unused")
 public class FirstLetterAlphabetSelector extends RegularExpressionSelector {
 
-    public FirstLetterAlphabetSelector() {
-        super(Pattern.compile("^[a-zA-Z].*$"));
+    @Override
+    public void configure(Option option) {
+        option.add(REGEX_OPTION_KEY, "^[a-zA-Z].*$");
+        super.configure(option);
     }
 }

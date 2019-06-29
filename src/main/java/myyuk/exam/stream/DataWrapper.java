@@ -1,5 +1,8 @@
 package myyuk.exam.stream;
 
+/**
+ * TODO:
+ */
 public class DataWrapper<T> {
     private final T value;
     private final boolean endOfStream;

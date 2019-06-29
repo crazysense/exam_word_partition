@@ -1,5 +1,8 @@
 package myyuk.exam.types;
 
+/**
+ * TODO:
+ */
 public class ComponentTypes {
 
     public interface ComponentType<E extends Enum<E>> {

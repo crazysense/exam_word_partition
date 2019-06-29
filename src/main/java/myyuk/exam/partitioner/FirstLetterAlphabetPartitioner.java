@@ -1,5 +1,9 @@
 package myyuk.exam.partitioner;
 
+/**
+ * TODO:
+ */
+@SuppressWarnings("unused")
 public class FirstLetterAlphabetPartitioner implements Partitioner<String> {
 
     @Override

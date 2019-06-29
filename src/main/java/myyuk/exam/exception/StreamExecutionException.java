@@ -1,5 +1,8 @@
 package myyuk.exam.exception;
 
+/**
+ * TODO:
+ */
 public class StreamExecutionException extends RuntimeException {
 
     public StreamExecutionException(String message) {

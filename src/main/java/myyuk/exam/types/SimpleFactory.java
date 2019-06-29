@@ -3,6 +3,7 @@ package myyuk.exam.types;
 import myyuk.exam.channel.Channel;
 import myyuk.exam.configuration.Configurables;
 import myyuk.exam.consumer.Consumer;
+import myyuk.exam.exception.InvalidOptionException;
 import myyuk.exam.option.Option;
 import myyuk.exam.partitioner.Partitioner;
 import myyuk.exam.producer.Producer;
@@ -10,6 +11,9 @@ import myyuk.exam.selector.Selector;
 
 import static myyuk.exam.types.ComponentTypes.*;
 
+/**
+ * TODO:
+ */
 @SuppressWarnings("unchecked")
 public abstract class SimpleFactory {
 
@@ -22,12 +26,11 @@ public abstract class SimpleFactory {
                 Configurables.configure(channel, option);
                 return channel;
             } catch (Exception e) {
-                // TODO : Logging Error.
+                throw new InvalidOptionException(e.getMessage(), e);
             }
         } else {
-            // TODO : Logging Error.
+            throw new InvalidOptionException("Invalid channel type: " + type);
         }
-        return null;
     }
 
     public static <T> Consumer<T> createConsumer(String type, Option option) {
@@ -39,12 +42,11 @@ public abstract class SimpleFactory {
                 Configurables.configure(consumer, option);
                 return consumer;
             } catch (Exception e) {
-                // TODO : Logging Error.
+                throw new InvalidOptionException(e.getMessage(), e);
             }
         } else {
-            // TODO : Logging Error.
+            throw new InvalidOptionException("Invalid consumer type: " + type);
         }
-        return null;
     }
 
     public static <T> Producer<T> createProducer(String type, Option option) {
@@ -56,12 +58,11 @@ public abstract class SimpleFactory {
                 Configurables.configure(producer, option);
                 return producer;
             } catch (Exception e) {
-                // TODO : Logging Error.
+                throw new InvalidOptionException(e.getMessage(), e);
             }
         } else {
-            // TODO : Logging Error.
+            throw new InvalidOptionException("Invalid producer type: " + type);
         }
-        return null;
     }
 
     public static <T> Partitioner<T> createPartitioner(String type, Option option) {
@@ -73,12 +74,11 @@ public abstract class SimpleFactory {
                 Configurables.configure(partitioner, option);
                 return partitioner;
             } catch (Exception e) {
-                // TODO : Logging Error.
+                throw new InvalidOptionException(e.getMessage(), e);
             }
         } else {
-            // TODO : Logging Error.
+            throw new InvalidOptionException("Invalid partitioner type: " + type);
         }
-        return null;
     }
 
     public static <T> Selector<T> createSelector(String type, Option option) {
@@ -90,11 +90,10 @@ public abstract class SimpleFactory {
                 Configurables.configure(selector, option);
                 return selector;
             } catch (Exception e) {
-                // TODO : Logging Error.
+                throw new InvalidOptionException(e.getMessage(), e);
             }
         } else {
-            // TODO : Logging Error.
+            throw new InvalidOptionException("Invalid selector type: " + type);
         }
-        return null;
     }
 }
