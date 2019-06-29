@@ -10,7 +10,11 @@
     <packaging>jar</packaging>
 
     <name>word-partition</name>
-    <description>Extract words from a given file, create files by partition, and append words.</description>
+    <description>
+        Extract the words from the specified file,
+        create a file corresponding to the first alphabet of the word by partition,
+        and add the word to the file.
+    </description>
 
     <properties>
         <java.version>1.8</java.version>
