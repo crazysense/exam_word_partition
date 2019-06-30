@@ -12,7 +12,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * TODO:
+ * WordsFromFileProducer reads from the file as texts.
+ * When reading to the end of the file, the EOS signal will be set to 'true' and close file stream.
  */
 @SuppressWarnings("unused")
 public class WordsFromFileProducer extends Producer<String> implements Configurable {

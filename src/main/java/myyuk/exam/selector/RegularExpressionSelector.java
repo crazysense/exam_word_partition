@@ -6,13 +6,14 @@ import myyuk.exam.option.Option;
 import java.util.regex.Pattern;
 
 /**
- * TODO:
+ * RegularExpressionSelector filters strings corresponding to the specified regular expression.
+ * Returns 'true' if the data matches the specified regular expression, 'false' otherwise.
  */
 @SuppressWarnings("unused")
 public class RegularExpressionSelector implements Selector<String>, Configurable {
 
     public static final String REGEX_OPTION_KEY = "option.selector.regex";
-    public static final String REGEX_OPTION_DEFAULT = ".*";
+    private static final String REGEX_OPTION_DEFAULT = ".*";
 
     private Pattern pattern;
 

@@ -11,6 +11,10 @@ import myyuk.exam.selector.Selector;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Stream is inspired by other streaming engines.
+ * Users can registering producer, consumer (and others) to Stream instead of create threads directly.
+ */
 public class Stream<T> {
 
     private final int parallelism;
@@ -19,31 +23,62 @@ public class Stream<T> {
     private Channel<T> channel;
     private List<Consumer<T>> consumers;
 
-    public Stream(int parallelism, Producer<T> producer) {
+    Stream(int parallelism, Producer<T> producer) {
         this.parallelism = parallelism;
         this.producer = producer;
     }
 
-    public Stream<T> addChannel(Channel<T> channel) {
-        this.check(this.channel == null, "");
-        this.channel = channel;
-        return this;
-    }
-
+    /**
+     * Add filter to stream.
+     *
+     * @param selector An instance of Selector.
+     * @return The Stream.
+     * @see Selector
+     */
     public Stream<T> filter(Selector<T> selector) {
-        this.check(this.producer != null && this.producer.getSelector() == null, "");
+        this.check(this.producer != null
+                && this.producer.getSelector() == null, "Empty producer!");
         this.producer.setSelector(selector);
         return this;
     }
 
+    /**
+     * Add partitioner to stream.
+     *
+     * @param partitioner An instance of Partitioner.
+     * @return The Stream.
+     * @see Partitioner
+     */
     public Stream<T> keyBy(Partitioner<T> partitioner) {
-        this.check(this.producer != null, "");
+        this.check(this.producer != null, "Empty producer!");
         this.producer.setPartitioner(partitioner);
         return this;
     }
 
-    public StreamExecutor<T> addSink(Consumer consumer) {
-        this.check(this.consumers == null || this.consumers.size() == 0, "");
+    /**
+     * Add channel to stream.
+     *
+     * @param channel An instance of Channel.
+     * @return The Stream.
+     * @see Channel
+     */
+    public Stream<T> addChannel(Channel<T> channel) {
+        this.check(this.channel == null, "Channel already exist!");
+        this.channel = channel;
+        return this;
+    }
+
+    /**
+     * Add consumer to stream.
+     *
+     * @param consumer An instance of Channel.
+     * @return The StreamExecutor
+     * @see Consumer
+     * @see StreamExecutor
+     */
+    public StreamExecutor<T> addConsumer(Consumer consumer) {
+        this.check(this.consumers == null
+                || this.consumers.size() == 0, "Consumer already exist!");
 
         this.consumers = new ArrayList<>();
         for (int i = 0; i < this.parallelism; i++) {
@@ -59,7 +94,7 @@ public class Stream<T> {
                 this.producer.addChannel(channelCopy);
                 this.consumers.add(consumerCopy);
             } catch (CloneNotSupportedException e) {
-                throw new StreamExecutionException("");
+                throw new StreamExecutionException("Cannot replicate channels and sinks.");
             }
         }
         return new StreamExecutor<>(this.parallelism, this.producer, this.consumers);

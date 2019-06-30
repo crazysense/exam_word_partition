@@ -1,7 +1,7 @@
 package myyuk.exam.exception;
 
 /**
- * TODO:
+ * If an unexpected error occurs during stream operation, StreamExecutionException occurred.
  */
 public class StreamExecutionException extends RuntimeException {
 

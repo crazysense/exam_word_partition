@@ -1,7 +1,7 @@
 package myyuk.exam.exception;
 
 /**
- * TODO:
+ * If the option is invalid, InvalidOptionException occurred.
  */
 public class InvalidOptionException extends RuntimeException {
 

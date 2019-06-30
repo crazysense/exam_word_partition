@@ -50,6 +50,7 @@ public class WordWriteConsumer extends Consumer<String> implements Configurable 
                 throw new ResourceException(e.getMessage(), e);
             }
         }
+        this.fileMap.clear();
         logger.exiting("WordWriteConsumer[" + getPartitionId() + "]", "close()");
     }
 
@@ -72,10 +73,9 @@ public class WordWriteConsumer extends Consumer<String> implements Configurable 
                 writer = Files.newBufferedWriter(file.toPath(),
                         StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             } catch (IOException e) {
-                StringBuilder error = new StringBuilder();
-                error.append("Could not create file: ").append(key).append(FILE_EXTENSION).append(System.lineSeparator())
-                        .append("The key '").append(key).append("' will not be saved.");
-                logger.info(error.toString());
+                String error = "Could not create file: " + key + FILE_EXTENSION
+                        + System.lineSeparator() + "The key '" + key + "' will not be saved.";
+                logger.info(error);
                 writer = new DummyWriter();
             }
         }
@@ -92,20 +92,24 @@ public class WordWriteConsumer extends Consumer<String> implements Configurable 
         return writer;
     }
 
+    /**
+     * If the file can not be created, the Dummy Writer is used.
+     * And if the Dummy Writer is called, do not anything.
+     */
     class DummyWriter extends Writer {
 
         @Override
-        public void write(char[] cbuf, int off, int len) throws IOException {
+        public void write(char[] cbuf, int off, int len) {
             // do nothing
         }
 
         @Override
-        public void flush() throws IOException {
+        public void flush() {
             // do nothing
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // do nothing
         }
     }

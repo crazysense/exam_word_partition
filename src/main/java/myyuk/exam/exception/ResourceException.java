@@ -1,7 +1,7 @@
 package myyuk.exam.exception;
 
 /**
- * TODO:
+ * If an error occurs when creating or removing the resources, ResourceException occurred.
  */
 public class ResourceException extends RuntimeException {
 

@@ -12,43 +12,17 @@ import myyuk.exam.selector.Selector;
 import static myyuk.exam.types.ComponentTypes.*;
 
 /**
- * TODO:
+ * SimpleFactory is a factory class that creates components.
  */
 @SuppressWarnings("unchecked")
 public abstract class SimpleFactory {
 
-    public static <T> Channel<T> createChannel(String type, Option option) {
-        ChannelType ct = ChannelType.UNKNOWN.of(type);
-        if (!ChannelType.UNKNOWN.equals(ct)) {
-            try {
-                Class<Channel<T>> channelClass = (Class<Channel<T>>) Class.forName(ct.getClassName());
-                Channel<T> channel = channelClass.newInstance();
-                Configurables.configure(channel, option);
-                return channel;
-            } catch (Exception e) {
-                throw new InvalidOptionException(e.getMessage(), e);
-            }
-        } else {
-            throw new InvalidOptionException("Invalid channel type: " + type);
-        }
-    }
-
-    public static <T> Consumer<T> createConsumer(String type, Option option) {
-        ConsumerType ct = ConsumerType.UNKNOWN.of(type);
-        if (!ConsumerType.UNKNOWN.equals(ct)) {
-            try {
-                Class<Consumer<T>> consumerClass = (Class<Consumer<T>>) Class.forName(ct.getClassName());
-                Consumer<T> consumer = consumerClass.newInstance();
-                Configurables.configure(consumer, option);
-                return consumer;
-            } catch (Exception e) {
-                throw new InvalidOptionException(e.getMessage(), e);
-            }
-        } else {
-            throw new InvalidOptionException("Invalid consumer type: " + type);
-        }
-    }
-
+    /**
+     * Create a Producer.
+     * @param type The type of Producer.
+     * @param option An option.
+     * @return Created new Producer.
+     */
     public static <T> Producer<T> createProducer(String type, Option option) {
         ProducerType pt = ProducerType.UNKNOWN.of(type);
         if (!ProducerType.UNKNOWN.equals(pt)) {
@@ -65,6 +39,56 @@ public abstract class SimpleFactory {
         }
     }
 
+    /**
+     * Create a Consumer.
+     * @param type The type of Consumer.
+     * @param option An option.
+     * @return Created new Consumer.
+     */
+    public static <T> Consumer<T> createConsumer(String type, Option option) {
+        ConsumerType ct = ConsumerType.UNKNOWN.of(type);
+        if (!ConsumerType.UNKNOWN.equals(ct)) {
+            try {
+                Class<Consumer<T>> consumerClass = (Class<Consumer<T>>) Class.forName(ct.getClassName());
+                Consumer<T> consumer = consumerClass.newInstance();
+                Configurables.configure(consumer, option);
+                return consumer;
+            } catch (Exception e) {
+                throw new InvalidOptionException(e.getMessage(), e);
+            }
+        } else {
+            throw new InvalidOptionException("Invalid consumer type: " + type);
+        }
+    }
+
+    /**
+     * Create a Channel.
+     * @param type The type of Channel.
+     * @param option An option.
+     * @return Created new Channel.
+     */
+    public static <T> Channel<T> createChannel(String type, Option option) {
+        ChannelType ct = ChannelType.UNKNOWN.of(type);
+        if (!ChannelType.UNKNOWN.equals(ct)) {
+            try {
+                Class<Channel<T>> channelClass = (Class<Channel<T>>) Class.forName(ct.getClassName());
+                Channel<T> channel = channelClass.newInstance();
+                Configurables.configure(channel, option);
+                return channel;
+            } catch (Exception e) {
+                throw new InvalidOptionException("Invalid channel type: " + type);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Create a Partitioner.
+     * @param type The type of Partitioner.
+     * @param option An option.
+     * @return Created new Partitioner.
+     */
     public static <T> Partitioner<T> createPartitioner(String type, Option option) {
         PartitionerType pt = PartitionerType.UNKNOWN.of(type);
         if (!PartitionerType.UNKNOWN.equals(pt)) {
@@ -74,13 +98,19 @@ public abstract class SimpleFactory {
                 Configurables.configure(partitioner, option);
                 return partitioner;
             } catch (Exception e) {
-                throw new InvalidOptionException(e.getMessage(), e);
+                throw new InvalidOptionException("Invalid partitioner type: " + type);
             }
         } else {
-            throw new InvalidOptionException("Invalid partitioner type: " + type);
+            return null;
         }
     }
 
+    /**
+     * Create a Selector.
+     * @param type The type of Selector.
+     * @param option An option.
+     * @return Created new Selector.
+     */
     public static <T> Selector<T> createSelector(String type, Option option) {
         SelectorType st = SelectorType.UNKNOWN.of(type);
         if (!SelectorType.UNKNOWN.equals(st)) {
@@ -90,10 +120,10 @@ public abstract class SimpleFactory {
                 Configurables.configure(selector, option);
                 return selector;
             } catch (Exception e) {
-                throw new InvalidOptionException(e.getMessage(), e);
+                throw new InvalidOptionException("Invalid selector type: " + type);
             }
         } else {
-            throw new InvalidOptionException("Invalid selector type: " + type);
+            return null;
         }
     }
 }

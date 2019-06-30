@@ -1,7 +1,9 @@
 package myyuk.exam.partitioner;
 
 /**
- * TODO:
+ * Partition according to the first letter of the alphabet.
+ * It is not case-sensitive,
+ * for example, 'a' and 'A' have the same partition id.
  */
 @SuppressWarnings("unused")
 public class FirstLetterAlphabetPartitioner implements Partitioner<String> {

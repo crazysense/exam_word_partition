@@ -22,21 +22,43 @@ public class OptionBuilder {
         return error;
     }
 
+    /**
+     * Create new instance of OptionBuilder.
+     *
+     * @return An instance of OptionBuilder.
+     */
     public static OptionBuilder of() {
         return new OptionBuilder();
     }
 
+    /**
+     * Create new instance of OptionBuilder with arguments.
+     *
+     * @param arguments The program arguments.
+     * @return An instance of OptionBuilder.
+     */
     public static OptionBuilder of(String[] arguments) {
         OptionBuilder parser = new OptionBuilder();
         parser.arguments = arguments;
         return parser;
     }
 
+    /**
+     * Sets the program arguments.
+     *
+     * @param arguments The program arguments.
+     * @return An instance of OptionBuilder that arguments is set.
+     */
     public OptionBuilder arguments(String[] arguments) {
         this.arguments = arguments;
         return this;
     }
 
+    /**
+     * Verifies the program arguments, and generates options if valid.
+     *
+     * @return Verified option or null. (invalid)
+     */
     public Option build() {
         if (arguments == null || arguments.length != 3) {
             throw new IllegalArgumentException("Invalid Usage");

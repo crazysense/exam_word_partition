@@ -8,6 +8,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * StreamExecutor executes the stream.
+ *
+ * When start a stream through 'start' method, the registered Producer and Consumers run in the thread pool.
+ * If want to register Shutdown-Hook for graceful shutdown, just calling 'shutdown' method.
+ */
 public class StreamExecutor<T> {
 
     private final ExecutorService executorService;
@@ -15,28 +21,34 @@ public class StreamExecutor<T> {
     private final Producer<T> producer;
     private final List<Consumer<T>> consumers;
 
-    public StreamExecutor(int parallelism, Producer<T> producer, List<Consumer<T>> consumers) {
+    StreamExecutor(int parallelism, Producer<T> producer, List<Consumer<T>> consumers) {
         this.executorService = Executors.newFixedThreadPool(parallelism + 1);
         this.producer = producer;
         this.consumers = consumers;
     }
 
+    /**
+     * Start the stream.
+     */
     public void start() {
         for (Consumer<T> consumer : this.consumers) {
             this.executorService.submit(consumer);
         }
         this.executorService.submit(this.producer);
+        // shutdown.
+        this.executorService.shutdown();
     }
 
+    /**
+     * Register the shutdown hook.
+     */
     public void shutdown() {
-        this.executorService.shutdown();
-
         // Add shutdown hook for abnormal terminated.
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             this.executorService.shutdown();
             while (true) {
                 try {
-                    if (this.awaitTermination(5, TimeUnit.SECONDS)) {
+                    if (this.executorService.awaitTermination(5, TimeUnit.SECONDS)) {
                         break;
                     }
                 } catch (InterruptedException e) {
@@ -47,11 +59,10 @@ public class StreamExecutor<T> {
         }));
     }
 
-    private boolean awaitTermination(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        return this.executorService.awaitTermination(timeout, timeUnit);
-    }
-
-    private void shutdownNow() {
+    /**
+     * Stop the stream immediately.
+     */
+    public void shutdownNow() {
         this.executorService.shutdownNow();
         // Force resource release.
         if (this.producer != null) {

@@ -7,7 +7,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- *
+ * MemoryFifoChannel is the simple channel using the blocking queue.
+ * Depending on the number of parallelism, the internal queue can be replicated.
+ * Implement clone to create an internal queue as a new reference.
  */
 @SuppressWarnings("unused")
 public class MemoryFifoChannel<T> extends Channel<T> {
@@ -37,5 +39,12 @@ public class MemoryFifoChannel<T> extends Channel<T> {
         if (this.queue != null) {
             this.queue.clear();
         }
+    }
+
+    @Override
+    public MemoryFifoChannel<T> clone() throws CloneNotSupportedException {
+        MemoryFifoChannel<T> channelClone = (MemoryFifoChannel<T>) super.clone();
+        channelClone.queue = new LinkedBlockingQueue<>();
+        return channelClone;
     }
 }

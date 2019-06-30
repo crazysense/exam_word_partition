@@ -1,10 +1,13 @@
 package myyuk.exam.types;
 
 /**
- * TODO:
+ * ComponentTypes for make easier to create component.
+ * Components includes Consumer, Producer, Channel, Selector, and Partitioner.
+ * If they are registered ComponentType, can use alias without using the class name.
  */
-public class ComponentTypes {
+public abstract class ComponentTypes {
 
+    // Parent
     public interface ComponentType<E extends Enum<E>> {
         String getClassName();
 
@@ -90,8 +93,7 @@ public class ComponentTypes {
     // Selector Type
     public enum SelectorType implements ComponentType<SelectorType> {
         UNKNOWN("null"),
-        GENERAL_REGEX("myyuk.exam.selector.RegularExpressionSelector"),
-        FIRSTLETTER_ALPHABET("myyuk.exam.selector.FirstLetterAlphabetSelector");
+        GENERAL_REGEX("myyuk.exam.selector.RegularExpressionSelector");
 
         private String className;
 

@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * TODO:
+ * Producer reads the data and sends the data to the channel.
+ * Producer has a filter and a partitioner and can transfer data to a specific channel depending on their behavior.
+ * When the EOS (End Of Stream) signal is received, broadcasts EOS signal to all channels. (for graceful shutdown)
  */
 public abstract class Producer<T> implements Runnable {
     private static final Logger logger = Logger.getGlobal();
@@ -75,6 +77,11 @@ public abstract class Producer<T> implements Runnable {
         this.close();
     }
 
+    /**
+     * Check EOS (End Of Stream).
+     *
+     * @return true or false.
+     */
     public boolean isEndOfStream() {
         return false;
     }

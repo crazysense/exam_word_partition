@@ -1,7 +1,8 @@
 package myyuk.exam.stream;
 
 /**
- * TODO:
+ * DataWrapper is a wrapper class for sending data and EOS signals together.
+ * Consumers must be able to receive EOS signals from each message to avoid concurrency issues.
  */
 public class DataWrapper<T> {
     private final T value;

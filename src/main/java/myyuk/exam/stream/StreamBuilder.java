@@ -7,11 +7,14 @@ import myyuk.exam.option.OptionConstants;
 import myyuk.exam.partitioner.Partitioner;
 import myyuk.exam.producer.Producer;
 import myyuk.exam.selector.Selector;
-import myyuk.exam.types.ComponentTypes;
 import myyuk.exam.types.SimpleFactory;
 
 /**
- * TODO:
+ * StreamBuilder helps you generate streams from the option.
+ * Rather than change the program code to use another classes,
+ * users can change the class by simply changing the option.
+ *
+ * @see Option
  */
 public class StreamBuilder {
     private Option option;
@@ -24,71 +27,74 @@ public class StreamBuilder {
         this.option = option;
     }
 
+    /**
+     * Create new instance of StreamBuilder.
+     *
+     * @return An instance of StreamBuilder.
+     */
     public static StreamBuilder of() {
         return new StreamBuilder();
     }
 
+    /**
+     * Create new instance of StreamBuilder.
+     *
+     * @param option An option.
+     * @return An instance of StreamBuilder.
+     */
     public static StreamBuilder of(Option option) {
         return new StreamBuilder(option);
     }
 
+    /**
+     * Create new instance of StreamBuilder.
+     *
+     * @param option An option.
+     * @return An instance of StreamBuilder.
+     */
     public StreamBuilder option(Option option) {
         this.option = option;
         return this;
     }
 
+    /**
+     * Verifies the option, and generates StreamExecutor if valid.
+     *
+     * @return Verified StreamExecutor or null. (invalid)
+     * @see StreamExecutor
+     */
     public <T> StreamExecutor<T> build() {
         if (this.option == null) {
             return null;
         }
 
-//        List<Channel<T>> channelList = new ArrayList<>();
-//        List<Consumer<T>> consumers = new ArrayList<>();
-        int maxPartitionNumber = this.option.getInteger(OptionConstants.PARTITION_NUMBER);
-//        for (int i = 0; i < maxPartitionNumber; i++) {
-//            // Create channel
-//            Channel<T> channel = SimpleFactory.createChannel(
-//                    ComponentTypes.ChannelType.MEMORY_FIFO_CHANNEL.name(), this.option);
-//            channelList.add(channel);
-//
-//            // Create consumer
-//            Consumer<T> consumer = SimpleFactory.createConsumer(
-//                    ComponentTypes.ConsumerType.WORD_WRITER.name(), this.option);
-//            if (channel == null || consumer == null) {
-//                return null;
-//            }
-//            consumer.setChannel(channel);
-//            consumer.setPartitionId(i);
-//
-//            consumers.add(consumer);
-//        }
+        // Create producer
+        Producer<T> producer = SimpleFactory.createProducer(
+                this.option.getString(OptionConstants.PRODUCER_TYPE), this.option);
 
         // Create channel
         Channel<T> channel = SimpleFactory.createChannel(
-                ComponentTypes.ChannelType.MEMORY_FIFO_CHANNEL.name(), this.option);
-
-        // Create consumer
-        Consumer<T> consumer = SimpleFactory.createConsumer(
-                ComponentTypes.ConsumerType.WORD_WRITER.name(), this.option);
+                this.option.getString(OptionConstants.CHANNEL_TYPE), this.option);
 
         // Create partitioner
         Partitioner<T> partitioner = SimpleFactory.createPartitioner(
-                ComponentTypes.PartitionerType.FIRST_LETTER_ALPHABET.name(), this.option);
+                this.option.getString(OptionConstants.PARTITIONER_TYPE), this.option);
+
         // Create selector
         Selector<T> selector = SimpleFactory.createSelector(
-                ComponentTypes.SelectorType.FIRSTLETTER_ALPHABET.name(), this.option);
+                this.option.getString(OptionConstants.SELECTOR_TYPE), this.option);
 
-        // Create producer
-        Producer<T> producer = SimpleFactory.createProducer(
-                ComponentTypes.ProducerType.WORD_READER.name(), this.option);
-//        producer.setChannels(channelList);
-//        producer.setPartitioner(partitioner);
-//        producer.setSelector(selector);
-//        producer.setTotalPartitionNumber(maxPartitionNumber);
+        // Create consumer
+        Consumer<T> consumer = SimpleFactory.createConsumer(
+                this.option.getString(OptionConstants.CONSUMER_TYPE), this.option);
 
-//        return new StreamEnvironment<>(producer, consumers);
-
+        // Make StreamExecutor
+        int maxPartitionNumber = this.option.getInteger(OptionConstants.PARTITION_NUMBER);
         StreamEnvironment<T> env = StreamEnvironment.of(maxPartitionNumber);
-        return env.addSource(producer).filter(selector).keyBy(partitioner).addChannel(channel).addSink(consumer);
+        Stream<T> stream = env.addProducer(producer);
+        if (selector != null) stream = stream.filter(selector);
+        if (partitioner != null) stream = stream.keyBy(partitioner);
+        if (channel != null) stream.addChannel(channel);
+        return stream.addConsumer(consumer);
     }
 }

@@ -4,7 +4,8 @@ import myyuk.exam.exception.InvalidOptionException;
 import myyuk.exam.exception.StreamExecutionException;
 import myyuk.exam.option.Option;
 import myyuk.exam.option.OptionBuilder;
-import myyuk.exam.stream.StreamEnvironment;
+import myyuk.exam.option.OptionConstants;
+import myyuk.exam.selector.RegularExpressionSelector;
 import myyuk.exam.stream.StreamBuilder;
 import myyuk.exam.stream.StreamExecutor;
 
@@ -13,8 +14,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static myyuk.exam.types.ComponentTypes.*;
+
 public class WordApplication {
-    private final static Level logLevel = Level.FINER;
+    private final static Level logLevel = Level.INFO;
     private final static Logger logger = Logger.getGlobal();
     private static final String USAGE = "Usage: WordApplication " +
             "[READ_FILE_PATH] [WRITE_DIRECTORY_PATH] [PARTITION_NUMBER]" + System.lineSeparator() +
@@ -39,6 +42,25 @@ public class WordApplication {
             if (option == null) {
                 throw new InvalidOptionException(optionBuilder.getError());
             }
+
+            // ================
+            // Required
+            // ================
+            // producer
+            option.add(OptionConstants.PRODUCER_TYPE, ProducerType.WORD_READER.name());
+            // consumer
+            option.add(OptionConstants.CONSUMER_TYPE, ConsumerType.WORD_WRITER.name());
+
+            // ================
+            // Optional
+            // ================
+            // selector : regex
+            option.add(OptionConstants.SELECTOR_TYPE, SelectorType.GENERAL_REGEX.name());
+            option.add(RegularExpressionSelector.REGEX_OPTION_KEY, "^[a-zA-Z].*$");
+            // partitioner : fist letter is alphabet (ignore case)
+            option.add(OptionConstants.PARTITIONER_TYPE, PartitionerType.FIRST_LETTER_ALPHABET.name());
+            // channel : on-heap blocking queue
+            option.add(OptionConstants.CHANNEL_TYPE, ChannelType.MEMORY_FIFO_CHANNEL.name());
 
             streamExecutor = StreamBuilder.of(option).build();
             streamExecutor.start();
