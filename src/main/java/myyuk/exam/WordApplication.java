@@ -15,11 +15,11 @@ import static myyuk.exam.types.ComponentTypes.*;
 public class WordApplication {
     private final static Logger logger = Logger.getLogger(WordApplication.class.getName());
     private static final String USAGE = "Usage: WordApplication " +
-            "[READ_FILE_PATH] [WRITE_DIRECTORY_PATH] [PARTITION_NUMBER]" + System.lineSeparator() +
+            "[SOURCE_PATH] [TARGET_DIR_PATH] [PARTITION_NUMBER]" + System.lineSeparator() +
             "==============================================================================" + System.lineSeparator() +
-            "READ_FILE_PATH       : Specifies the absolute path of the file to read." + System.lineSeparator() +
-            "WRITE_DIRECTORY_PATH : Specifies the directory where the result files will be stored." + System.lineSeparator() +
-            "PARTITION_NUMBER     : Specifies the number of parallel partitions. (1 < PARTITION_NUMBER < 27)";
+            "SOURCE_PATH       : Specifies the absolute path of the file to read." + System.lineSeparator() +
+            "TARGET_DIR_PATH   : Specifies the directory where the result files will be stored." + System.lineSeparator() +
+            "PARTITION_NUMBER  : Specifies the number of parallel partitions. (1 < PARTITION_NUMBER < 27)";
 
     public static void main(String[] args) {
         StreamExecutor<Object> streamExecutor = null;
