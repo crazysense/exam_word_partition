@@ -19,9 +19,7 @@ public class Stream<T> {
 
     private final int parallelism;
     private final Producer<T> producer;
-
     private Channel<T> channel;
-    private List<Consumer<T>> consumers;
 
     Stream(int parallelism, Producer<T> producer) {
         this.parallelism = parallelism;
@@ -77,10 +75,7 @@ public class Stream<T> {
      * @see StreamExecutor
      */
     public StreamExecutor<T> addConsumer(Consumer consumer) {
-        this.check(this.consumers == null
-                || this.consumers.size() == 0, "Consumer already exist!");
-
-        this.consumers = new ArrayList<>();
+        List<Consumer<T>> consumers = new ArrayList<>();
         for (int i = 0; i < this.parallelism; i++) {
             try {
                 //noinspection unchecked
@@ -92,12 +87,12 @@ public class Stream<T> {
                 consumerCopy.setChannel(channelCopy);
 
                 this.producer.addChannel(channelCopy);
-                this.consumers.add(consumerCopy);
+                consumers.add(consumerCopy);
             } catch (CloneNotSupportedException e) {
                 throw new StreamExecutionException("Cannot replicate channels and sinks.");
             }
         }
-        return new StreamExecutor<>(this.parallelism, this.producer, this.consumers);
+        return new StreamExecutor<>(this.parallelism, this.producer, consumers);
     }
 
     private void check(boolean condition, String error) throws StreamExecutionException {
