@@ -1,69 +1,73 @@
 package myyuk.exam.stream;
 
+import myyuk.exam.channel.Channel;
+import myyuk.exam.channel.MemoryFifoChannel;
 import myyuk.exam.consumer.Consumer;
+import myyuk.exam.exception.StreamExecutionException;
+import myyuk.exam.partitioner.Partitioner;
 import myyuk.exam.producer.Producer;
+import myyuk.exam.selector.Selector;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-/**
- * TODO:
- */
 public class Stream<T> {
 
-    private final ExecutorService executorService;
+    private final int parallelism;
+    private final Producer<T> producer;
 
-    private Producer<T> producer;
+    private Channel<T> channel;
     private List<Consumer<T>> consumers;
 
-    private Stream(int nThreads) {
-        this.executorService = Executors.newFixedThreadPool(nThreads);
-    }
-
-    Stream(Producer<T> producer, List<Consumer<T>> consumers) {
-        this(consumers.size() + 1); // consumers (N) + producer (1)
+    public Stream(int parallelism, Producer<T> producer) {
+        this.parallelism = parallelism;
         this.producer = producer;
-        this.consumers = consumers;
     }
 
-    public void start() {
-        for (Consumer<T> consumer : this.consumers) {
-            this.executorService.submit(consumer);
-        }
-        this.executorService.submit(this.producer);
+    public Stream<T> addChannel(Channel<T> channel) {
+        this.check(this.channel == null, "");
+        this.channel = channel;
+        return this;
     }
 
-    public void shutdown() {
-        this.executorService.shutdown();
+    public Stream<T> filter(Selector<T> selector) {
+        this.check(this.producer != null && this.producer.getSelector() == null, "");
+        this.producer.setSelector(selector);
+        return this;
+    }
 
-        // Add shutdown hook for abnormal terminated.
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            this.executorService.shutdown();
-            while (true) {
-                try {
-                    if (this.awaitTermination(5, TimeUnit.SECONDS)) {
-                        break;
-                    }
-                } catch (InterruptedException e) {
-                    this.shutdownNow();
-                    Thread.currentThread().interrupt();
-                }
+    public Stream<T> keyBy(Partitioner<T> partitioner) {
+        this.check(this.producer != null, "");
+        this.producer.setPartitioner(partitioner);
+        return this;
+    }
+
+    public StreamExecutor<T> addSink(Consumer consumer) {
+        this.check(this.consumers == null || this.consumers.size() == 0, "");
+
+        this.consumers = new ArrayList<>();
+        for (int i = 0; i < this.parallelism; i++) {
+            try {
+                //noinspection unchecked
+                Consumer<T> consumerCopy = consumer.clone();
+                consumerCopy.setPartitionId(i);
+
+                Channel<T> channelCopy = this.channel != null
+                        ? this.channel.clone() : new MemoryFifoChannel<>();
+                consumerCopy.setChannel(channelCopy);
+
+                this.producer.addChannel(channelCopy);
+                this.consumers.add(consumerCopy);
+            } catch (CloneNotSupportedException e) {
+                throw new StreamExecutionException("");
             }
-        }));
+        }
+        return new StreamExecutor<>(this.parallelism, this.producer, this.consumers);
     }
 
-    public boolean awaitTermination(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        return this.executorService.awaitTermination(timeout, timeUnit);
-    }
-
-    public void shutdownNow() {
-        this.executorService.shutdownNow();
-        // Force resource release.
-        this.producer.close();
-        for (Consumer<T> consumer : this.consumers) {
-            consumer.close();
+    private void check(boolean condition, String error) throws StreamExecutionException {
+        if (!condition) {
+            throw new StreamExecutionException(error);
         }
     }
 }

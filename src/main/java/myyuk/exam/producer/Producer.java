@@ -5,6 +5,7 @@ import myyuk.exam.partitioner.Partitioner;
 import myyuk.exam.selector.Selector;
 import myyuk.exam.stream.DataWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,12 +20,12 @@ public abstract class Producer<T> implements Runnable {
     private Selector<T> selector;
     private int totalPartitionNumber;
 
-    public void setChannels(List<Channel<T>> channels) {
-        this.channels = channels;
-    }
-
     public void setPartitioner(Partitioner<T> partitioner) {
         this.partitioner = partitioner;
+    }
+
+    public Selector<T> getSelector() {
+        return selector;
     }
 
     public void setSelector(Selector<T> selector) {
@@ -33,6 +34,13 @@ public abstract class Producer<T> implements Runnable {
 
     public void setTotalPartitionNumber(int totalPartitionNumber) {
         this.totalPartitionNumber = totalPartitionNumber;
+    }
+
+    public void addChannel(Channel<T> channel) {
+        if (this.channels == null) {
+            this.channels = new ArrayList<>();
+        }
+        this.channels.add(channel);
     }
 
     @Override

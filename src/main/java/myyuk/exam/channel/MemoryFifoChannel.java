@@ -7,10 +7,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * TODO:
+ *
  */
 @SuppressWarnings("unused")
-public class MemoryFifoChannel<T> implements Channel<T> {
+public class MemoryFifoChannel<T> extends Channel<T> {
 
     private BlockingQueue<DataWrapper<T>> queue;
 

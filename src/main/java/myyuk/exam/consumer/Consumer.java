@@ -6,7 +6,7 @@ import myyuk.exam.stream.DataWrapper;
 /**
  * A Consumer is an executor that receives data from a channel and performs operations.
  */
-public abstract class Consumer<T> implements Runnable {
+public abstract class Consumer<T> implements Runnable, Cloneable {
 
     private int partitionId; // for logging
     private Channel<T> channel;
@@ -58,4 +58,10 @@ public abstract class Consumer<T> implements Runnable {
      * Implement resource cleanup if necessary.
      */
     public abstract void close();
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Consumer<T> clone() throws CloneNotSupportedException {
+        return (Consumer<T>) super.clone();
+    }
 }

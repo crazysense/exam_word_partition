@@ -4,8 +4,9 @@ import myyuk.exam.exception.InvalidOptionException;
 import myyuk.exam.exception.StreamExecutionException;
 import myyuk.exam.option.Option;
 import myyuk.exam.option.OptionBuilder;
-import myyuk.exam.stream.Stream;
+import myyuk.exam.stream.StreamEnvironment;
 import myyuk.exam.stream.StreamBuilder;
+import myyuk.exam.stream.StreamExecutor;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -13,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WordApplication {
-    private final static Level logLevel = Level.INFO;
+    private final static Level logLevel = Level.FINER;
     private final static Logger logger = Logger.getGlobal();
     private static final String USAGE = "Usage: WordApplication " +
             "[READ_FILE_PATH] [WRITE_DIRECTORY_PATH] [PARTITION_NUMBER]" + System.lineSeparator() +
@@ -30,7 +31,7 @@ public class WordApplication {
     }
 
     public static void main(String[] args) {
-        Stream<String> stream = null;
+        StreamExecutor<Object> streamExecutor = null;
 
         try {
             OptionBuilder optionBuilder = OptionBuilder.of(args);
@@ -39,8 +40,8 @@ public class WordApplication {
                 throw new InvalidOptionException(optionBuilder.getError());
             }
 
-            stream = StreamBuilder.of(option).build();
-            stream.start();
+            streamExecutor = StreamBuilder.of(option).build();
+            streamExecutor.start();
         } catch (IllegalArgumentException e) {
             logger.info(USAGE);
         } catch (InvalidOptionException e) {
@@ -48,8 +49,8 @@ public class WordApplication {
         } catch (StreamExecutionException e) {
             logger.severe(e.getMessage());
         } finally {
-            if (stream != null) {
-                stream.shutdown();
+            if (streamExecutor != null) {
+                streamExecutor.shutdown();
             }
         }
     }

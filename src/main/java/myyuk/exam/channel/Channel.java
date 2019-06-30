@@ -5,23 +5,29 @@ import myyuk.exam.stream.DataWrapper;
 /**
  * The channel is the buffer of the partition.
  */
-public interface Channel<T> {
+public abstract class Channel<T> implements Cloneable {
 
     /**
      * Add data to the channel.
      * @param value The data to add.
      * @return Success of failure.
      */
-    boolean add(DataWrapper<T> value);
+    public abstract boolean add(DataWrapper<T> value);
 
     /**
      * Fetch data from the channel.
      * @return The data.
      */
-    DataWrapper<T> get();
+    public abstract DataWrapper<T> get();
 
     /**
      * Cleanup resources.
      */
-    void clear();
+    public abstract void clear();
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Channel<T> clone() throws CloneNotSupportedException {
+        return (Channel<T>) super.clone();
+    }
 }

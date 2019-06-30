@@ -10,9 +10,6 @@ import myyuk.exam.selector.Selector;
 import myyuk.exam.types.ComponentTypes;
 import myyuk.exam.types.SimpleFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * TODO:
  */
@@ -40,31 +37,39 @@ public class StreamBuilder {
         return this;
     }
 
-    public <T> Stream<T> build() {
+    public <T> StreamExecutor<T> build() {
         if (this.option == null) {
             return null;
         }
 
-        List<Channel<T>> channelList = new ArrayList<>();
-        List<Consumer<T>> consumers = new ArrayList<>();
+//        List<Channel<T>> channelList = new ArrayList<>();
+//        List<Consumer<T>> consumers = new ArrayList<>();
         int maxPartitionNumber = this.option.getInteger(OptionConstants.PARTITION_NUMBER);
-        for (int i = 0; i < maxPartitionNumber; i++) {
-            // Create channel
-            Channel<T> channel = SimpleFactory.createChannel(
-                    ComponentTypes.ChannelType.MEMORY_FIFO_CHANNEL.name(), this.option);
-            channelList.add(channel);
+//        for (int i = 0; i < maxPartitionNumber; i++) {
+//            // Create channel
+//            Channel<T> channel = SimpleFactory.createChannel(
+//                    ComponentTypes.ChannelType.MEMORY_FIFO_CHANNEL.name(), this.option);
+//            channelList.add(channel);
+//
+//            // Create consumer
+//            Consumer<T> consumer = SimpleFactory.createConsumer(
+//                    ComponentTypes.ConsumerType.WORD_WRITER.name(), this.option);
+//            if (channel == null || consumer == null) {
+//                return null;
+//            }
+//            consumer.setChannel(channel);
+//            consumer.setPartitionId(i);
+//
+//            consumers.add(consumer);
+//        }
 
-            // Create consumer
-            Consumer<T> consumer = SimpleFactory.createConsumer(
-                    ComponentTypes.ConsumerType.WORD_WRITER.name(), this.option);
-            if (channel == null || consumer == null) {
-                return null;
-            }
-            consumer.setChannel(channel);
-            consumer.setPartitionId(i);
+        // Create channel
+        Channel<T> channel = SimpleFactory.createChannel(
+                ComponentTypes.ChannelType.MEMORY_FIFO_CHANNEL.name(), this.option);
 
-            consumers.add(consumer);
-        }
+        // Create consumer
+        Consumer<T> consumer = SimpleFactory.createConsumer(
+                ComponentTypes.ConsumerType.WORD_WRITER.name(), this.option);
 
         // Create partitioner
         Partitioner<T> partitioner = SimpleFactory.createPartitioner(
@@ -76,11 +81,14 @@ public class StreamBuilder {
         // Create producer
         Producer<T> producer = SimpleFactory.createProducer(
                 ComponentTypes.ProducerType.WORD_READER.name(), this.option);
-        producer.setChannels(channelList);
-        producer.setPartitioner(partitioner);
-        producer.setSelector(selector);
-        producer.setTotalPartitionNumber(maxPartitionNumber);
+//        producer.setChannels(channelList);
+//        producer.setPartitioner(partitioner);
+//        producer.setSelector(selector);
+//        producer.setTotalPartitionNumber(maxPartitionNumber);
 
-        return new Stream<>(producer, consumers);
+//        return new StreamEnvironment<>(producer, consumers);
+
+        StreamEnvironment<T> env = StreamEnvironment.of(maxPartitionNumber);
+        return env.addSource(producer).filter(selector).keyBy(partitioner).addChannel(channel).addSink(consumer);
     }
 }
