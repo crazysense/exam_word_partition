@@ -1,8 +1,7 @@
 Exam_Word_Partition
 ===
 
-# 목차
----
+## 목차
 * [시스템 요구사항](#시스템-요구사항)  
 * [개발 환경](#개발-환경)  
 * [빌드 및 실행](#빌드-및-실행)  
@@ -57,12 +56,12 @@ $ java -Djava.util.logging.config.file=./logging.properties \
 ```
 
 ## 클래스 설계
-### Channel
-### Producer
-### Consumer
-### Partitioner
-### Selector
-### Stream
-
+* Channel
+* Producer
+* Consumer
+* Partitioner
+* Selector
+* Stream
+  
 ## 실행 결과
 이미지 붙일 것.
