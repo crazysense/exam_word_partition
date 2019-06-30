@@ -31,12 +31,13 @@ public abstract class Consumer<T> implements Runnable, Cloneable {
     public final void run() {
         this.open();
         while (!isEndOfStream()) {
-            DataWrapper<T> dataWrapper = channel.get();
+            DataWrapper<T> dataWrapper = this.channel.get();
             this.endOfStream = dataWrapper.isEndOfStream();
             if (!isEndOfStream()) {
                 execute(dataWrapper.getValue());
             }
         }
+        this.channel.clear();
         this.close();
     }
 
