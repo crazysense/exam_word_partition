@@ -2,12 +2,15 @@ package myyuk.exam.option;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
@@ -90,11 +93,20 @@ public class OptionBuilderTest {
     }
 
     @Test
-    public void testAlreadyExistDirectory() {
+    public void testAlreadyExistDirectory() throws IOException {
         PowerMockito.mockStatic(Files.class);
+        PowerMockito.mockStatic(Paths.class);
+
+        Path directoryMock = Mockito.mock(Path.class);
+        PowerMockito.when(Paths.get("directory")).thenReturn(directoryMock);
+
+        File fileMock = Mockito.mock(File.class);
+        Mockito.when(fileMock.getCanonicalPath()).thenReturn("directory");
+        Mockito.when(directoryMock.toFile()).thenReturn(fileMock);
+
         PowerMockito.when(Files.exists(Paths.get("filename"))).thenReturn(true);
-        PowerMockito.when(Files.exists(Paths.get("directory"))).thenReturn(true);
-        PowerMockito.when(Files.isDirectory(Paths.get("directory"))).thenReturn(true);
+        PowerMockito.when(Files.exists(directoryMock)).thenReturn(true);
+        PowerMockito.when(Files.isDirectory(directoryMock)).thenReturn(true);
 
         String[] argument = new String[]{
                 "filename", "directory", "10"
@@ -109,9 +121,18 @@ public class OptionBuilderTest {
     @Test
     public void testCreateDirectory() throws Exception {
         PowerMockito.mockStatic(Files.class);
+        PowerMockito.mockStatic(Paths.class);
+
+        Path directoryMock = Mockito.mock(Path.class);
+        PowerMockito.when(Paths.get("directory")).thenReturn(directoryMock);
+
+        File fileMock = Mockito.mock(File.class);
+        Mockito.when(fileMock.getCanonicalPath()).thenReturn("directory");
+        Mockito.when(directoryMock.toFile()).thenReturn(fileMock);
+
         PowerMockito.when(Files.exists(Paths.get("filename"))).thenReturn(true);
-        PowerMockito.when(Files.exists(Paths.get("directory"))).thenReturn(false);
-        PowerMockito.when(Files.createDirectories(Paths.get("directory"))).thenReturn(Paths.get("directory"));
+        PowerMockito.when(Files.exists(directoryMock)).thenReturn(false);
+        PowerMockito.when(Files.createDirectories(directoryMock)).thenReturn(directoryMock);
 
         String[] argument = new String[]{
                 "filename", "directory", "10"

@@ -27,7 +27,7 @@ public class TestSample {
         Map<Character, Long> map = new HashMap<>();
         Pattern p = Pattern.compile("^[a-zA-Z].*$");
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("sample/words.txt");
+        InputStream is = getClass().getResourceAsStream("words.txt");
         try (InputStreamReader isr = new InputStreamReader(is);
              BufferedReader br = new BufferedReader(isr)) {
             String line;

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * When the EOS (End Of Stream) signal is received, broadcasts EOS signal to all channels. (for graceful shutdown)
  */
 public abstract class Producer<T> implements Runnable {
-    private static final Logger logger = Logger.getGlobal();
+    protected static final Logger logger = Logger.getLogger(Producer.class.getName());
 
     private List<Channel<T>> channels;
     private Partitioner<T> partitioner;

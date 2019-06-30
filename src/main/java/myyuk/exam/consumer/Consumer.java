@@ -3,10 +3,13 @@ package myyuk.exam.consumer;
 import myyuk.exam.channel.Channel;
 import myyuk.exam.stream.DataWrapper;
 
+import java.util.logging.Logger;
+
 /**
  * A Consumer is an executor that receives data from a channel and performs operations.
  */
 public abstract class Consumer<T> implements Runnable, Cloneable {
+    protected static final Logger logger = Logger.getLogger(Consumer.class.getName());
 
     private int partitionId; // for logging
     private Channel<T> channel;

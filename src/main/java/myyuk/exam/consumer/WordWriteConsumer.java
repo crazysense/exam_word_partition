@@ -13,14 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * TODO:
  */
 @SuppressWarnings("unused")
 public class WordWriteConsumer extends Consumer<String> implements Configurable {
-    private static final Logger logger = Logger.getGlobal();
 
     private static final String FILE_EXTENSION = ".txt";
 
@@ -36,7 +34,6 @@ public class WordWriteConsumer extends Consumer<String> implements Configurable 
     public void open() {
         logger.entering("WordWriteConsumer[" + getPartitionId() + "]", "open()");
         this.fileMap = new HashMap<>();
-        logger.exiting("WordWriteConsumer[" + getPartitionId() + "]", "open()");
     }
 
     @Override
@@ -51,7 +48,6 @@ public class WordWriteConsumer extends Consumer<String> implements Configurable 
             }
         }
         this.fileMap.clear();
-        logger.exiting("WordWriteConsumer[" + getPartitionId() + "]", "close()");
     }
 
     @Override

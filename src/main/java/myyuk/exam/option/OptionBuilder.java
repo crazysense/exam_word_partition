@@ -79,6 +79,7 @@ public class OptionBuilder {
             this.error = String.format("The file to read does not exist in the specified path: %s", filePathToRead);
             return false;
         }
+
         // Check the path of the directory to save results.
         Path directoryPathToWrite = Paths.get(option.getString(OptionConstants.WRITE_DIRECTORY_PATH, ""));
         if (!Files.exists(directoryPathToWrite)) {
@@ -92,6 +93,12 @@ public class OptionBuilder {
             this.error = String.format("Could not create a directory to save the results: %s", directoryPathToWrite);
             return false;
         }
+        try {
+            option.add(OptionConstants.WRITE_DIRECTORY_PATH, directoryPathToWrite.toFile().getCanonicalPath());
+        } catch (IOException ignore) {
+            // Previously checked. Ignore it.
+        }
+
         // Check partition number. (1 < N < 27)
         int partitionNumber = option.getInteger(OptionConstants.PARTITION_NUMBER, OptionConstants.DEFAULT_PARTITION_NUMBER);
         if (!(1 < partitionNumber && partitionNumber < 27)) {

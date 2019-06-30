@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * WordsFromFileProducer reads from the file as texts.
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings("unused")
 public class WordsFromFileProducer extends Producer<String> implements Configurable {
-    private static final Logger logger = Logger.getGlobal();
 
     private String readFilePath;
     private BufferedReader reader;
@@ -54,7 +52,6 @@ public class WordsFromFileProducer extends Producer<String> implements Configura
         } catch (FileNotFoundException e) {
             throw new ResourceException(e.getMessage(), e);
         }
-        logger.exiting("WordsFromFileProducer", "open()");
     }
 
     @Override
@@ -67,7 +64,6 @@ public class WordsFromFileProducer extends Producer<String> implements Configura
                 throw new ResourceException(e.getMessage(), e);
             }
         }
-        logger.exiting("WordsFromFileProducer", "close()");
     }
 
 }

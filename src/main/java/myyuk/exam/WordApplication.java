@@ -1,7 +1,6 @@
 package myyuk.exam;
 
 import myyuk.exam.exception.InvalidOptionException;
-import myyuk.exam.exception.StreamExecutionException;
 import myyuk.exam.option.Option;
 import myyuk.exam.option.OptionBuilder;
 import myyuk.exam.option.OptionConstants;
@@ -9,16 +8,12 @@ import myyuk.exam.selector.RegularExpressionSelector;
 import myyuk.exam.stream.StreamBuilder;
 import myyuk.exam.stream.StreamExecutor;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static myyuk.exam.types.ComponentTypes.*;
 
 public class WordApplication {
-    private final static Level logLevel = Level.INFO;
-    private final static Logger logger = Logger.getGlobal();
+    private final static Logger logger = Logger.getLogger(WordApplication.class.getName());
     private static final String USAGE = "Usage: WordApplication " +
             "[READ_FILE_PATH] [WRITE_DIRECTORY_PATH] [PARTITION_NUMBER]" + System.lineSeparator() +
             "==============================================================================" + System.lineSeparator() +
@@ -26,19 +21,13 @@ public class WordApplication {
             "WRITE_DIRECTORY_PATH : Specifies the directory where the result files will be stored." + System.lineSeparator() +
             "PARTITION_NUMBER     : Specifies the number of parallel partitions. (1 < PARTITION_NUMBER < 27)";
 
-    static {
-        Handler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(logLevel);
-        logger.addHandler(consoleHandler);
-        logger.setLevel(logLevel);
-    }
-
     public static void main(String[] args) {
         StreamExecutor<Object> streamExecutor = null;
+        Option option = null;
 
         try {
             OptionBuilder optionBuilder = OptionBuilder.of(args);
-            Option option = optionBuilder.build();
+            option = optionBuilder.build();
             if (option == null) {
                 throw new InvalidOptionException(optionBuilder.getError());
             }
@@ -68,11 +57,18 @@ public class WordApplication {
             logger.info(USAGE);
         } catch (InvalidOptionException e) {
             logger.info(e.getMessage());
-        } catch (StreamExecutionException e) {
+        } catch (Exception e) {
             logger.severe(e.getMessage());
         } finally {
             if (streamExecutor != null) {
-                streamExecutor.shutdown();
+                try {
+                    streamExecutor.waitForShutdown();
+                } catch (InterruptedException e) {
+                    logger.severe("Program terminated abnormally.");
+                    streamExecutor.shutdownNow();
+                }
+                logger.info("Complete successfully. " + System.lineSeparator()
+                        + "See the result here: " + option.getString(OptionConstants.WRITE_DIRECTORY_PATH));
             }
         }
     }
