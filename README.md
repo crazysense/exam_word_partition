@@ -25,8 +25,8 @@ Exam_Word_Partition
 ```console
 $ git clone https://github.com/crazysense/exam_word_partition.git
 $ cd exam_word_partition
-$ git checkout develop
-$ git pull origin develop
+$ git fetch origin
+$ git pull origin master
 $ mvn clean package [-Dmaven.test.skip=true]
 ```
 
@@ -241,6 +241,4 @@ $ java -Djava.util.logging.config.file=./logging.properties \
 Link : [JavaDoc](https://crazysense.github.io/exam_word_partition/apidocs/)
   
 ## 실행 결과
-(TODO : 계속)  
-이미지 붙일 것.  
-
+![screenshot](img/execution/01-execution.png)
