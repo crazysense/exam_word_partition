@@ -53,8 +53,34 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                <!--<version>3.1.0</version>-->
+                <!--<configuration>-->
+                    <!--<doctitle>Exam_Word_Partition</doctitle>-->
+                    <!--<show>public</show>-->
+                    <!--<nohelp>true</nohelp>-->
+                    <!--<doclint>none</doclint>-->
+                    <!--<useStandardDocletOptions>true</useStandardDocletOptions>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
+
+    <!--<reporting>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                <!--<version>3.1.0</version>-->
+                <!--<configuration>-->
+                    <!--<show>private</show>-->
+                    <!--<nohelp>true</nohelp>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</reporting>-->
 
     <dependencies>
         <dependency>
