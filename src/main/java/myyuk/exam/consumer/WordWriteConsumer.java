@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO:
+ * WordWriteConsumer writes the text received from the channel to a file.
+ * Since a single Consumer can be assigned multiple characters, the (File)Writer is managed by a HashMap.
  */
 @SuppressWarnings("unused")
 public class WordWriteConsumer extends Consumer<String> implements Configurable {
