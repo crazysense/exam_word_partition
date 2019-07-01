@@ -238,7 +238,7 @@ $ java -Djava.util.logging.config.file=./logging.properties \
 
 ## JavaDoc
 자세한 내용은 아래 JavaDoc 에서 확인할 수 있습니다.  
-Link : [JavaDoc](apidocs/index.html)
+Link : [JavaDoc](https://crazysense.github.io/exam_word_partition/apidocs/)
   
 ## 실행 결과
 (TODO : 계속)  
