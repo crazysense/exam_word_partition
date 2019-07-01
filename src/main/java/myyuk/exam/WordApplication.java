@@ -63,12 +63,12 @@ public class WordApplication {
             if (streamExecutor != null) {
                 try {
                     streamExecutor.waitForShutdown();
+                    logger.info("Complete successfully. " + System.lineSeparator()
+                            + "See the result here: " + option.getString(OptionConstants.WRITE_DIRECTORY_PATH));
                 } catch (InterruptedException e) {
                     logger.severe("Program terminated abnormally.");
                     streamExecutor.shutdownNow();
                 }
-                logger.info("Complete successfully. " + System.lineSeparator()
-                        + "See the result here: " + option.getString(OptionConstants.WRITE_DIRECTORY_PATH));
             }
         }
     }
