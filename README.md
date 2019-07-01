@@ -53,7 +53,7 @@ Logger 를 변경하려면 빌드가 완료된 target 디렉토리의 logging.pr
   *Logger 를 설정하지 않은 경우에는 ConsoleHandler 의 INFO Level 로 동작합니다.*
 ```console
 $ java -Djava.util.logging.config.file=./logging.properties \
-> -jar ./word-partition-0.1.jar [READ_FILE_PATH] [WRITE_DIR_PATH] [PATITION_NUMBER]
+> -jar ./word-partition-0.1.jar [SOURCE_PATH] [TARGET_DIR_PATH] [PATITION_NUMBER]
 ```
 
 ## 클래스 설계
