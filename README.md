@@ -208,7 +208,6 @@ $ java -Djava.util.logging.config.file=./logging.properties \
                 executor.waitForShutdown();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
                 if (executor != null) {  
                     streamExecutor.shutdownNow();
                 }
@@ -228,8 +227,7 @@ $ java -Djava.util.logging.config.file=./logging.properties \
              executor.waitForShutdown();
          } catch (Exception e) {
               e.printStackTrace();
-         } finally {
-             if (executor != null) {  
+              if (executor != null) {  
                 streamExecutor.shutdownNow();
              }
          }
